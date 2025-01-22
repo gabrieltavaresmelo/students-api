@@ -1,11 +1,16 @@
-from typing import List
+from typing import List, Optional, Any
 
-from fastapi import FastAPI, Form, HTTPException, Query
+from fastapi import FastAPI, Form, HTTPException, Query, Request
+from fastapi.templating import Jinja2Templates
+from pathlib import Path
+
+BASE_PATH = Path(__file__).resolve().parent
+TEMPLATES = Jinja2Templates(directory=str(BASE_PATH / "templates"))
 
 app = FastAPI()
 
 # In-memory storage for students
-students = []
+students = ['jose']
 
 @app.get("/students")
 async def list_students():
@@ -102,3 +107,35 @@ async def delete_student(student_id: int):
                 "data": deleted_student
             }
     raise HTTPException(status_code=404, detail="Student not found.")
+
+
+@app.post("/login")
+async def create_student(
+    email: str = Form(...),
+    senha: str = Form(...)
+):
+    return True
+
+#########################3
+## TELAS
+
+@app.get("/")
+def root(request: Request) -> dict:  # 2
+    return TEMPLATES.TemplateResponse(
+        "index.html",
+        {"request": request, "students": students},
+    )
+
+@app.get("/tela_login")
+def tela_login(request: Request) -> dict:  # 2
+    return TEMPLATES.TemplateResponse(
+        "login.html",
+        {"request": request},
+    )
+
+@app.get("/tela_form")
+def tela_form(request: Request) -> dict:  # 2
+    return TEMPLATES.TemplateResponse(
+        "form.html",
+        {"request": request},
+    )
