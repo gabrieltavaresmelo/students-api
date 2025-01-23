@@ -10,7 +10,14 @@ TEMPLATES = Jinja2Templates(directory=str(BASE_PATH / "templates"))
 app = FastAPI()
 
 # In-memory storage for students
-students = ['jose']
+students = [
+    {
+        "id": 1,  # Generate a simple ID
+        "name": 'José da Silva',
+        "email": 'jose@gmail.com',
+        "phone": '88999775533'
+    }
+]
 
 @app.get("/students")
 async def list_students():
@@ -138,4 +145,11 @@ def tela_form(request: Request) -> dict:  # 2
     return TEMPLATES.TemplateResponse(
         "form.html",
         {"request": request},
+    )
+
+@app.get("/tela_list")
+def tela_list(request: Request) -> dict:
+    return TEMPLATES.TemplateResponse(
+        "listagem.html",
+        {"request": request, "data": students},
     )
